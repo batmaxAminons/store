@@ -158,10 +158,11 @@
 }
 
 .df-btn div {
+	color: #49a1f3;
 	display: inline-block;
 	width: 50%;
 	cursor: pointer;
-	border: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;

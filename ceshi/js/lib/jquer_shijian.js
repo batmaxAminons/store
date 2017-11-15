@@ -43,7 +43,7 @@
 		            minuteText: '分',//顶部时间 分单位 文字
 		           	secondsText: '秒',//顶部时间 秒单位 文字
 		            okText:"确认",//按钮确认键文字
-		            cancelText:"取消",//按钮取消键文字
+		            cancelText:"清空",//按钮取消键文字
 		            thisElm:null,//当前控制的dom
 		            showNowTime:true,//是否默认显示当前时间
 		            alwaysShow:false,//是否默认直接显示插件
@@ -63,14 +63,14 @@
 		            },
 		            df_box:function(){return $("</div><div class='df-box "+(sjObj.opt.alwaysShow?"alwaysShow":"")+" "+sjObj.opt.boxClassName+"' style='line-height:"+sjObj.opt.height+"px;'></div>")},
 		            df_main:function(){return $("<div class='df-main'>")},
-		            df_btn:function(){
+		            df_final:function(){
 		                if(sjObj.opt.alwaysShow){
 		                    return
 		                }
 		                return $("<div class='df-btn' style='height:"+sjObj.opt.height+"px'><div class='df-ok'>"+sjObj.opt.okText+"</div><div class='df-no'>"+sjObj.opt.cancelText+"</div></div>")
 		            },
 		            df_wrap:function(){return $("<div class='df-wrap'><table><tbody><tr></tr></tbody></table></div>")},
-		            df_final:function(){return $("<div class='df-final'></div>")},
+		            df_btn:function(){return $("<div class='df-final'></div>")},
 		            getArr:function(){
 		                //按时间生成分钟，小时，月天数，月份
 		                for(var i=0;i<61;i++){
@@ -94,8 +94,8 @@
 		            },
 		            y:10,
 		            nowTime:new Date(),
-		            startYear:null, //自定义开始年份
-		            endYear:null, //自定义结束年份
+		            startYear:new Date().getFullYear()-5, //自定义开始年份
+		            endYear:new Date().getFullYear()+5, //自定义结束年份
 		            ampmText:null,//上午下午
 		            //结构字符串生成
 		            dataNum:0,
@@ -104,7 +104,6 @@
 		                var df=this;
 		                var str;
 		                var text=text||"";
-		                console.log(this);
 		                if(df.width){
 		                    str='<div class="df-class">'+text+'</div><div class="df-item " style="height:'+(df.height*5-1)+'px;min-width:'+df.width+'px"><ul class="df-ul" data-class='+c+'>';
 		                }else{
@@ -141,17 +140,14 @@
 		                    sjObj.opt.getArr()
 		                }else{
 		                	if(sjObj.opt.yyArr.length>1){
-		                		console.log("年份",sjObj.opt.yyArr);
 		                		return;
 		                	}
 		                	var endYear=this.endYear||parseInt(sjObj.opt.y)+parseInt(this.startYear);
 		                	var y=-(endYear-parseInt(this.startYear));
 		                    nowTime=new Date(endYear+"/01/01");
-		                    console.log("自定义起始年份",endYear,y,nowTime);
 		                    for (var x=y,i=0;y>0?x!=0:x<1;y>0?x--:x++,i++) {
 		                        if(y<0){
 		                            sjObj.opt.yyArr[i]=nowTime.getFullYear()+x;
-		                            console.log(x, sjObj.opt.yyArr[i]);
 		                        }else{
 		                            sjObj.opt.yyArr[i]=nowTime.getFullYear()+i;
 		                        }
@@ -184,7 +180,6 @@
 		                $.each(Arr,function(){
 		                    str+='<li class="df-li df-show"  data-val='+sjObj.opt.fillZero(this)+' style="line-height:'+sjObj.opt.height+'px;height:'+sjObj.opt.height+'px">'+sjObj.opt.fillZero(this)+'</li>'
 		                })
-		                console.log(Arr)
 		                str+=sjObj.opt.strEnd();
 		                return str;
 		            },
@@ -194,10 +189,8 @@
 		                sjObj.opt.t_box=sjObj.opt.df_box();
 		                var main=sjObj.opt.df_main();
 		                var persp=sjObj.opt.df_persp();
-		                console.log(sjObj.opt.t_box);
 		                if(sjObj.opt.alwaysShow){
 		                  		sjObj.opt.timeElm=eval(sjObj.opt.timeElm);
-		                  		console.log(sjObj.opt.timeElm)
 		                        sjObj.opt.timeElm.append(sjObj.opt.t_box.append(main.append(wrap)));
 		                }else{
 		                		sjObj.opt.timeElm=$("<div class='df-persp'><div class='persp-bg'></div>");
@@ -244,8 +237,7 @@
 		                		sjeml=sjObj[0];
 		                	}
 		                	if(val){
-		                		console.log("input中有值",val);
-		                		console.log(val.indexOf(" "));
+		                		val.indexOf(" ");
 		                		if(val.indexOf("/")!=-1){
 		                			val=val.replace(/\//g,"-")
 		                		}
@@ -254,7 +246,6 @@
 		                		}else{
 		                			var valarr=[val];
 		                		}
-		                		console.log("拆分后",valarr);
 		                		var nyr,sfm;
 		                		var str="";
 		                		if(valarr.length==2){
@@ -263,21 +254,17 @@
 									str+=getnyrstr(nyr)+" "+getsfmstr(sfm);
 		                		}else if(valarr.length==1&&(valarr.indexOf("-")!=-1||valarr.indexOf("/")!=-1)){
 		                			str+=getnyrstr(valarr[0])+" "+getsfmstr("")
-		                			console.log("组合 2");
 		                		}else{
 		                			if(sjObj.opt.Year||sjObj.opt.Month||sjObj.opt.Day){
 		                				str+=getnyrstr(valarr[0])+" "+getsfmstr("")
 		                			}else{
 		                				str+=getnyrstr("")+" "+getsfmstr(valarr[0])
 		                			}
-		                			console.log("组合 3");
 		                		}
-		                		console.log("合成字符串",str)
 		                		data=new Date(str.replace(/-/g,"/"));
 		                	}else{
 		                		var data=new Date();
 		                	}
-		                	console.log(data);
 		                    var year=data.getFullYear();
 		                    var month=data.getMonth()+1;
 		                    var day=data.getDate();
@@ -290,53 +277,43 @@
 		                    sjObj.opt.h=fillZero(hours);
 		                    sjObj.opt.m=fillZero(Minutes);
 		                    sjObj.opt.s=fillZero(Seconds);
-		                    console.log(year,month,day,hours,Minutes);
-		                    console.log("是否显示年",sjObj.opt.Year)
 		                    if(sjObj.opt.Year)sjObj.opt.timeElm.find("[data-class='yyyy'] .df-li").each(function(){
-		                    	console.log(parseInt($(this).attr("data-val")),parseInt(year))
 		                        if(parseInt($(this).attr("data-val"))==parseInt(year)){
 		                            var pY=-($(this).index()-2)*sjObj.opt.height;
-		                           console.log(pY,year)
 		                            $(this).parent().css({"transform":"translate(0,"+pY+"px)"})
 		                        }
 		                    })
 		                    if(sjObj.opt.Month)sjObj.opt.timeElm.find("[data-class='mm'] .df-li").each(function(){
 		                        if(parseInt($(this).attr("data-val"))==parseInt(month)){
 		                            var pY=-($(this).index()-2)*sjObj.opt.height;
-		                            console.log(pY,month)
 		                            $(this).parent().css({"transform":"translate(0,"+pY+"px)"})
 		                        }
 		                    })
 		                    if(sjObj.opt.Day)sjObj.opt.timeElm.find("[data-class='dd'] .df-li").each(function(){
 		                        if(parseInt($(this).attr("data-val"))==parseInt(day)){
 		                            var pY=-($(this).index()-2)*sjObj.opt.height;
-		                           console.log(day)
 		                            $(this).parent().css({"transform":"translate(0,"+pY+"px)"})
 		                        }
 		                    })
 		                    if(sjObj.opt.Hour)sjObj.opt.timeElm.find("[data-class='h'] .df-li").each(function(){
 		                        if(parseInt($(this).attr("data-val"))==parseInt(hours)){
 		                            var pY=-($(this).index()-2)*sjObj.opt.height;
-		                            //console.log(pY,Hour)
 		                            $(this).parent().css({"transform":"translate(0,"+pY+"px)"})
 		                        }
 		                    })
 		                    if(sjObj.opt.Minute)sjObj.opt.timeElm.find("[data-class='m'] .df-li").each(function(){
 		                        if(parseInt($(this).attr("data-val"))==parseInt(Minutes)){
 		                            var pY=-($(this).index()-2)*sjObj.opt.height;
-		                            console.log(pY,Minutes,$(this).index(),this)
 		                            $(this).parent().css({"transform":"translate(0,"+pY+"px)"})
 		                        }
 		                    })
 		                    if(sjObj.opt.Seconds)sjObj.opt.timeElm.find("[data-class='m'] .df-li").each(function(){
 		                        if(parseInt($(this).attr("data-val"))==parseInt(Seconds)){
 		                            var pY=-($(this).index()-2)*sjObj.opt.height;
-		                            //console.log(pY)
 		                            $(this).parent().css({"transform":"translate(0,"+pY+"px)"})
 		                        }
 		                    })
 		                }else{
-		                	console.log("使用自定义时间")
 		                	if(sjObj.opt.Year)sjObj.opt.timeElm.find("[data-class='yyyy'] .df-li").each(function(){
 		                        if(parseInt($(this).attr("data-val"))==parseInt(sjObj.opt.yyyy)){
 		                            var pY=-($(this).index()-2)*sjObj.opt.height;
@@ -358,14 +335,12 @@
 		                    if(sjObj.opt.Hour)sjObj.opt.timeElm.find("[data-class='h'] .df-li").each(function(){
 		                        if(parseInt($(this).attr("data-val"))==parseInt(sjObj.opt.h)){
 		                            var pY=-($(this).index()-2)*sjObj.opt.height;
-		                              console.log(pY,sjObj.opt.h,$(this).index())
 		                            $(this).parent().css({"transform":"translate(0,"+pY+"px)"})
 		                        }
 		                    })
 		                    if(sjObj.opt.Minute)sjObj.opt.timeElm.find("[data-class='m'] .df-li").each(function(){
 		                        if(parseInt($(this).attr("data-val"))==parseInt(sjObj.opt.m)){
 		                            var pY=-($(this).index()-2)*sjObj.opt.height;
-		                            console.log(pY,sjObj.opt.m,$(this).index())
 		                            $(this).parent().css({"transform":"translate(0,"+pY+"px)"})
 		                        }
 		                    })
@@ -375,7 +350,6 @@
 		                            $(this).parent().css({"transform":"translate(0,"+pY+"px)"})
 		                        }
 		                    })
-		                    console.log("设置默认时间")
 		                }
 		                sjObj.opt.fillData();
 		                sjObj.opt.setCenter();
@@ -388,6 +362,7 @@
 		                    $(this).parent().parent().parent().remove();
 		                     sjObj.opt.onfun(sjObj);
 		                    $("html").removeClass("ov_hi");
+		                    $(sjObj.opt.thisElm).val('');
 		                })
 		                sjObj.opt.timeElm.find(".df-ok").on("click",function(){
 		                    var str="";
@@ -419,7 +394,6 @@
 		                    	str+=sjObj.opt.s;
 		                    }
 		                    sjObj.opt.val=sjObj.opt.isparseInt?parseInt(str):str;
-		                    console.log("我执行了没")
 		                    $(sjObj.opt.thisElm).val(sjObj.opt.val);
 		                    $(this).parent().parent().parent().remove();
 		                    sjObj.opt.okfun(sjObj);
@@ -450,15 +424,12 @@
 		                	str+=sjObj.opt.s;
 		                }
 		                if(!sjObj.opt.alwaysShow){
-		                	console.log("直接显示？",sjObj.opt.timeElm.find(".df-final"));
 		                	if(sjObj.opt.isparseInt){
 		                		sjObj.opt.timeElm.find(".df-final").html(parseInt(str));
 		                	}else{
 		                		sjObj.opt.timeElm.find(".df-final").html(str);
 		                	}
 		                }else{
-		                	console.log("啊哈哈哈哈啊？",sjObj.opt.timeElm.find(".df-final"))
-		                    //console.log($(sjObj.opt.thisElm));
 		                    $(sjObj.opt.thisElm).html(str).val(str);
 		                }
 		            },
@@ -482,7 +453,6 @@
 			                    var dataClass=$(this).attr("data-class");
 			                    var val=$($(this).find(".df-li")[Math.round(currentY/sjObj.opt.height)+2]).attr("data-val");
 			                    sjObj.opt.vardata(dataClass,val);
-			                    console.log(dataClass,val)
 			                    $(this).unbind("webkitTransitionEnd").on("webkitTransitionEnd",function(){
 			                        currentY=getTranslateY(this);
 			                        var val=$($(this).find(".df-li")[Math.round(currentY/sjObj.opt.height)+2]).attr("data-val");
@@ -497,7 +467,6 @@
 			                    var dataClass=$(this).attr("data-class");
 			                    var val=$($(this).find(".df-li")[Math.round(currentY/sjObj.opt.height)+2]).attr("data-val");
 			                    sjObj.opt.vardata(dataClass,val);
-			                    console.log(dataClass,val)
 			                    $(this).unbind("webkitTransitionEnd").on("webkitTransitionEnd",function(){
 			                        currentY=getTranslateY(this);
 			                        var val=$($(this).find(".df-li")[Math.round(currentY/sjObj.opt.height)+2]).attr("data-val");
@@ -513,36 +482,27 @@
 		                if(name=='mm'||name=="yyyy"){//在选择年份获取天数时
 		                    var day=new Date(sjObj.opt.yyyy,sjObj.opt.mm,0).getDate();
 		                    var l=sjObj.opt.timeElm.find('[data-class="dd"]').find(".df-show").length
-		                    //console.log("dd长度",l,$('[data-class="dd"]'));
 		                    var mubiao=day-l;
 		                    if(mubiao>0){
-		                        //console.log("大于");
 		                        for (var i=0;i<mubiao;i++) {
 		                            $(sjObj.opt.timeElm.find('[data-class="dd"]').find(".df-li")[l+i]).removeClass("df-hide").addClass("df-show")
-		                            //console.log($($('[data-class="dd"]').find(".df-li")[l-1+i]))
 		                        }
 		                    }else{
-		                        //console.log("小于");
 		                        var naomovey=getTranslateY(sjObj.opt.timeElm.find('[data-class="dd"]'))
 		                        for (var i=0;i>mubiao;i--) {
-		                            //console.log($($('[data-class="dd"]').find(".df-li")[l-1+i]),l-1+i)
 		                            $(sjObj.opt.timeElm.find('[data-class="dd"]').find(".df-li")[l-1+i]).removeClass("df-show").addClass("df-hide")
 		                        }
-		                        //console.log("当前y",naomovey,"目标y",(day-1-2)*sjObj.opt.height)
 		                        if(naomovey>(day-1-2)*sjObj.opt.height){
 		                            sjObj.opt.timeElm.find('[data-class="dd"]').css({"transition":"all .5s"})
 		                            sjObj.opt.timeElm.find('[data-class="dd"]').css({"transform":"translate(0,"+-(day-1-2)*sjObj.opt.height+"px)"})
 		                        }
 		                    }
-		                    //console.log("当月天数",day);
 		                };
 		            },
 		            //滚动事件绑定
 		            moveElm:function(eml){
-		                //console.log("进入",eml)
 		                return $(eml).each(function(){
 		                    //移动事件变量
-		                    //console.log("进入",$(this))
 		                    var sX=null,sY=null,
 		                        mX=null,mY=null,
 		                        eX=null,eY=null,
@@ -563,7 +523,6 @@
 		                    }
 		                    //移动事件开始
 		                    var moveStart=function(e){
-		                        console.log(e);
 		                        stop(e);
 		                        if(!canStart){
 		                            return
@@ -579,7 +538,6 @@
 		                        emlLang=nowElm.find(".df-show").length;
 		                        lastY=sY;
 		                        nY=getTranslateY(nowElm);
-		                        console.log("移动开始时",e);
 		                        sTime=new Date().getTime();
 		                        if(!canMove&&canEnd){
 		                            return false
@@ -601,13 +559,11 @@
 		                        }else{
 		                            ME=e;
 		                        }
-		                        //console.log("移动中",ME,sjObj.opt.nY)
 		                        mTime=new Date().getTime();
 		                        mX=ME.pageX;
 		                        mY=ME.pageY;
 		                        drt=GetSlideDirection(sX,sY,mX,mY);
 		                        if((drt==1||drt==2)&&!canStart){
-		                            //console.log("条件允许移动")
 		                            canMove=true;
 		                            canEnd=true;
 		                            stopInertiaMove=true;
@@ -618,7 +574,6 @@
 		                            sjObj.opt.getFinal();//获取当前值
 		                        }
 		                        if(mTime - sTime > 300) {
-		                            console.log("移动后加速")
 		                            sTime =mTime;
 		                            lastY =mY;
 		                        }
@@ -642,8 +597,6 @@
 		                            canStart=true;
 		                            nY=-(nY-(mY-sY));
 		                            nowY=eY;
-		                            //console.log(lastY,nowY,"结束时")
-		                            //console.log(sjObj.opt.nY,-(sjObj.opt.emlLang-2)*sjObj.opt.height)
 		                            if(nY>maxY){
 		                                nowElm.css({"transition":"all .5s"})
 		                                nowElm.css({"transform":"translate(0,"+maxY+"px)"})
@@ -653,31 +606,20 @@
 		                            }else{
 		                                eTime=new Date().getTime();
 		                                var speed=((nowY-lastY)/(eTime-sTime));
-		                                //console.log("移动距离",(nowY-lastY))
-		                                //console.log("移动时间",(eTime-sTime),sTime,eTime)
-		                                //console.log('移动速度',speed);
 		                                stopInertiaMove=false;
 		                                //惯性滚动函数
 		                                (function(v, startTime, contentY) {
 		                                    var dir = v > 0 ? -1 : 1;
 		                                    //加速度方向
 		                                    var deceleration = dir * 0.001;//0.001 为减速时间
-		                                    //console.log("移动方向",dir);
-		                                    //console.log("减速率",deceleration);
 		                                    function inertiaMove() {
 		                                        if (stopInertiaMove)
 		                                            return;
 		                                        var nowTime =new Date().getTime();
 		                                        var t = nowTime - startTime;
 		                                        var nowV = v + t * deceleration;
-		                                        //console.log("当期速度",nowV);
 		                                        var moveY = (v + nowV) / 2 * t;
-		                                        //console.log("当期移动距离",(contentY+moveY));
-		                                        //console.log("当期停止条件",dir * nowV,dir,nowV);
 		                                        if (dir * nowV > 0) {//大于0是减速停止
-		                                            //	console.log("移动结束，总距离",moveCy)
-		                                            //	console.log("移动结束，总距离除以高度",(moveCy/sjObj.opt.height))
-		                                            //	console.log("移动结束，总距离%高度",moveCy%sjObj.opt.height)
 		                                            if(moveCy>sjObj.opt.maxY){
 		                                                nowElm.css({"transition":"all .5s"})
 		                                                sjObj.opt.nowElm.css({"transform":"translate(0,"+sjObj.opt.maxY+"px)"})
@@ -686,12 +628,9 @@
 		                                                nowElm.css({"transform":"translate(0,"+sjObj.opt.minY+"px)"})
 		                                            }else{
 		                                                var MC=Math.round(moveCy/sjObj.opt.height)
-		                                                //		console.log(MC)
 		                                                if(MC>2){
-		                                                    //			console.log("大于长度")
 		                                                    MC=2
 		                                                }else if(MC<-(emlLang-1)+2){
-		                                                    //			console.log("小于长度+显示个数")
 		                                                    MC=-(emlLang-1)+2
 		                                                }
 		                                                nowElm.css({"transition":"all .4s"});
@@ -718,10 +657,8 @@
 		                                    inertiaMove();
 		                                })(speed, eTime, nY);
 		                            }
-		                            console.log("移动结束",EE)
 		                        }
 		                    }
-		                    console.log("开始绑定事件",$(this))
 		                    $(this).unbind("touchstart mousedown").on("touchstart mousedown",moveStart)//触摸起始//鼠标按下
 		                    $(this).unbind("touchmove").on("touchmove",moveing)//触摸移动
 		                    $(this).unbind("touchend").on("touchend",moveEnd)//触摸结束
@@ -738,7 +675,6 @@
 		        function getnyrstr(str) {
 			       	var r = sjObj.opt.Format; //yyyy-mm-dd;
 			       	var valarr = str.split("-");
-			       	console.log(valarr,str);
 			       	if(valarr.length == 3) {
 			       		r = r.replace("yyyy", valarr[0]);
 			       		r = r.replace("mm", valarr[1]);
@@ -777,12 +713,10 @@
 			       			r = r.replace("dd", sjObj.opt.dd);
 			       		}
 			       	};
-			       	console.log("返回年月日", r);
 			       	return r;
 			    }
 			    function getsfmstr(str) {
 			       	var r = sjObj.opt.timeFormat; //yyyy-mm-dd;
-			       	console.log(r);
 			       	var valarr = str.split(":");
 			       	if(valarr.length == 3) {
 			       		r = r.replace("h", valarr[0]);
@@ -822,7 +756,6 @@
 			       			r = r.replace("s", sjObj.opt.s);
 			       		}
 			       	};
-			       	console.log("返回时分秒", r);
 			       	return r;
 			    }
 		        var GetSlideDirection=function(startX,startY,endX,endY) {  //判读手指滑动方向
@@ -848,7 +781,6 @@
 		        };
 		        var getTranslateY=function(eml){
 		            var matrix=$(eml).css("transform");
-		            console.log("获取到的transform",matrix)
 		            var T;
 		            if(matrix=="none"){
 		                T=0;
@@ -856,7 +788,6 @@
 		                var arr=matrix.split(",")
 		                T=-(arr[5].split(")")[0]);
 		            }
-		            console.log("返回的transform",T)
 		            return T
 		        }
 		        sjObj.innt=function(){
@@ -877,12 +808,10 @@
 		                //$(this).val(sjObj.opt.time)
 		            }else{
 		                sjObj.opt.thisElm=this;
-		                console.log("直接显示")
 		                sjObj.opt.getYear();//获取年份
 		                sjObj.opt.buildHTml();
 		            }
 		            $(window).on("resize",function(){
-		                console.log("窗口大小改变")
 		                sjObj.opt.setCenter()
 		            })
 		        }
@@ -890,16 +819,13 @@
 		        return sjObj
     	}
     	if(this.length>1){
-    		console.log("多个")
     		var arr=[]
     		$.each(this,function(){
     			arr.push(cPlugin(this,true))
 		    })
     		return arr
     	}else{
-    		console.log("一个")
     		obj=cPlugin(this);
-    		console.log("一个时间对象",obj);
     		return obj
     	}
     }

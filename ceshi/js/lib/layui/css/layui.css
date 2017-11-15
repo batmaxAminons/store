@@ -2012,6 +2012,12 @@ a cite {
 	padding-right: .35rem;
 }
 
+.layui-input-fff{
+	background: #fff;
+	padding: 5px 10px;
+	border-radius: 4px;
+}
+
 .layui-input-inline {
 	display: inline-block;
 	vertical-align: middle
