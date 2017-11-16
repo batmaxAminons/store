@@ -49,7 +49,28 @@
 						"status": "1",
 						"bcode": "dingding_26036711",
 						"sort": "0",
-						"ddid": null
+						"ddid": null,
+						"_child": [
+							{
+								"id": "145",
+								"branch_name": "\u91c7\u8d2d\u90e8",
+								"parent_id": "144",
+								"company_id": "2",
+								"status": "1",
+								"bcode": "dingding_14864255",
+								"sort": "0",
+								"ddid": null
+							}, {
+								"id": "146",
+								"branch_name": "\u54c1\u7ba1",
+								"parent_id": "144",
+								"company_id": "2",
+								"status": "1",
+								"bcode": "dingding_36552151",
+								"sort": "0",
+								"ddid": null
+							}
+						]
 					}
 				]
 			}, {

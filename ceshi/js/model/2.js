@@ -263,6 +263,73 @@ define(['jquery','layui','template','larea','lareadata','time'],function($,lay,t
 					$.get('json/bm.json',function(info){
 						var arr = {};
 						$.extend(arr,info.info,{ui_type:_type,_value:_val,_name:ass});
+						console.log(info)
+						var _content = '';
+						$.each(arr.branch_list,function(i,e){
+							var n = 0 ;
+							function con(_data,_val,_type){
+								var _val = _val||''
+								var _con = '<ul class="_child">';
+								if(_data._child){
+									$.each(_data._child,function(s,_x){
+										var _nas = '';
+										var _clas = '';
+										var icons = '';
+										var _htmls = '';
+										if(_type==16||_type==18){_nas = "select_radio",icons=''}else{_nas = "select_checked" ,icons = "&#xe605;"};
+										for(var j = 0; j <_val.split(',').length;j++){
+											if(_val.split(',')[j] == _x.id){
+												_clas = ' checkeds'
+											}
+										}
+										if(_type==18||_type==19){
+											_htmls = 	'<div class="select-btn '+_nas+'">'
+														+'<i class="'+_x.id+_clas+' layui-icon">'+icons+'</i>'
+														+'</div>'
+										}
+										_con +='<li class="depart-item" id="'+_x.id+'">'
+										+_htmls
+										+'<span class="depart-icon">'
+										+'<i class="icon">&#xe60e;</i>'
+										+'</span>'
+										+'<span class="depart-text">'+_x.branch_name+'</span>'
+										if(_x._child){
+											_con +='<span class="_btn"></span></li>'+con(_x,_val,_type)
+											console.log(_type)
+										}else{
+											_con +='</li>'
+										}
+									})
+								}	
+								_con +='</ul>';
+								return _con
+							}
+							var _na = '';
+							var _cla = '';
+							var icon = '';
+							var _html = '';
+							if(_type==16||_type==18){_na = "select_radio",icon=""}else{_na = "select_checked",icon="&#xe605;"};
+							for(var j = 0; j <_val.split(',').length;j++){
+								if(_val.split(',')[j] == e.id){
+									_cla = ' checkeds'
+								}
+							}
+							if(_type==18||_type==19){
+								_html+=	'<div class="select-btn '+_na+'">'
+										+'<i class="'+e.id+_cla+' layui-icon">'+icon+'</i>'
+										+'</div>'
+							}
+							_content +='<li class="depart-item " id="'+e.id+'">'
+								+_html
+								+'<span class="depart-icon">'
+									+'<i class="icon">&#xe60e;</i>'
+								+'</span>'
+								+'<span class="depart-text">'+e.branch_name+'</span>';
+							if(e._child){_content += ('<span class="_btn"></span></li>'+con(e,_val,_type))}else{
+								_content += '</li>'
+							};
+						})
+						
 						var html = '<div class="select-set-pane" value="{{_value}}" type="{{ui_type}}">'+
 							'<div class="select-search">'+
 								'<div class="search-input x-text">'+
@@ -270,9 +337,10 @@ define(['jquery','layui','template','larea','lareadata','time'],function($,lay,t
 								+'</div>'
 							+'</div>'
 							+'<ul class="select-list {{if ui_type==17||ui_type==19}}selects-list{{/if}}" type="ui_type">'
-								+'{{if _value}}{{each _value.split(",")}}<li class="select-item {{$value}}"><i class="icon icon-department">&#xe60e;</i><span>{{_name[$index]}}</span><span class="remove-btn"><i>✖</i></span></li>{{/each}}{{/if}}'
+								+'{{if _value}}{{each _value.split(",")}}<li class="select-item {{$value}}"><i class="icon icon-department">{{if ui_type==16||ui_type==17}}&#xe64d;{{else}}&#xe60e;{{/if}}</i><span>{{_name[$index]}}</span><span class="remove-btn"><i>✖</i></span></li>{{/each}}{{/if}}'
 							+'</ul>'
 							+'<div class="set-list {{if ui_type==17||ui_type==19}}sets-list{{/if}}">'
+							+'{{if ui_type==16||ui_type==17}}<ul class="select-path"><li><span>我的部门</span></li></ul>{{/if}}'
 //								+'<div class="depart-title">我的部门</div>'
 //								+'<ul class="select-depart current-depart">'
 //									+'<li class="depart-item">'
@@ -285,17 +353,16 @@ define(['jquery','layui','template','larea','lareadata','time'],function($,lay,t
 //										+'<span >{{branch_name}}</span>'
 //									+'</li>'
 //								+'</ul>'
-								+'{{if ui_type==19||ui_type==18}}<ul class="select-depart">'
-									+'{{each branch_list}}<li class="depart-item " id="{{$value.id}}">'
-										+'<div class="select-btn {{if ui_type==18}}select_radio {{else}}select_checked{{/if}}">'
-										+'<i class="{{$value.id}} {{if _value}}<% for(var i = 0;i < _value.split(",").length; i++){ %>{{if _value.split(",")[i]==$value.id}}checkeds{{/if}}<% }%>{{/if}}"></i>'
-										+'</div>'
-										+'<span class="depart-icon">'
-											+'<i class="icon">&#xe60e;</i>'
-										+'</span>'
-										+'<span class="depart-text">{{$value.branch_name}}</span>'
-									+'</li>{{/each}}'
-								+'</ul>{{/if}}'
+								+'<ul class="select-depart">'
+									+_content
+								+'</ul>'
+								+'{{if ui_type==16||ui_type==17}}<ul class="select-user">'
+								+'{{each data}}<li class="user-item" id="{{$value.id}}">'//缺少数据
+								+'<span class="depart-icon"><i class="icon">&#xe64d;</i></span><span class="depart-text">{{$value.real_name}}</span>'
+								+'<div class="select-btn {{if ui_type==16}}select_radio{{else}}select_checked{{/if}}">'
+								+'<i class="{{$value.id}} {{if _value}}<% for(var i = 0;i < _value.split(",").length; i++){ %>{{if _value.split(",")[i]==$value.id}} checkeds{{/if}}<% }%>{{/if}} layui-icon">{{if ui_type==17}}&#xe605;{{/if}}</i>'
+								+'</div>'
+								+'</li>{{/each}}</ul>{{/if}}'//缺少数据end
 							+'</div>'
 							+'<div class="set-btn-pane">'
 								+'<div class="set-btn"><button class="x-btn style-grey" role="cancel">取消</button></div>'
@@ -303,12 +370,16 @@ define(['jquery','layui','template','larea','lareadata','time'],function($,lay,t
 							+'</div>'
 						+'</div>';
 						shade({html:templay.render(html,arr),fun:function(){
-							$('.depart-item').on('click',function(){
-								$(this).children('.select-btn').find('i').toggleClass('checkeds');
+							$('._btn').on('click',function(e){
+								e.stopPropagation();
+								$(this).toggleClass('_xz').parent().next('._child').toggle(300);
+							})
+							function click(){
 								if($(this).closest('.select-set-pane').attr('type')=='18'||$(this).closest('.select-set-pane').attr('type')=='16'){
-									$(this).siblings().children('.select_radio').children('i').removeClass('checkeds');
+									$('.select_radio').children('i').removeClass('checkeds');
 									$('.select-list').children().remove();
 								}
+								$('.select-btn').find('i.'+$(this).attr('id')).toggleClass('checkeds');
 								if($(this).children('.select-btn').find('i').hasClass('checkeds')){
 									switch($('.select-set-pane').attr('type')*1){
 										case 17:
@@ -320,11 +391,54 @@ define(['jquery','layui','template','larea','lareadata','time'],function($,lay,t
 											var icon = "&#xe60e;"
 										break;
 									}
-									$('<li class="select-item '+$(this).attr("id")+'"><i class="icon icon-department">'+icon+'</i><span>'+$(this).find(".depart-text").text()+'</span><span class="remove-btn"><i>✖</i></span></li>').appendTo('.select-list')
+									$('<li class="select-item '+$(this).attr("id")+'"><i class="icon icon-department">'+icon+'</i><span>'+$(this).children(".depart-text").text()+'</span><span class="remove-btn"><i>✖</i></span></li>').appendTo('.select-list')
 								}else{
 									$('.select-list .'+$(this).attr('id')+' .remove-btn').click();
 								}
-							})
+							}
+							if($('.select-set-pane').attr('type')==18||$('.select-set-pane').attr('type')==19){
+								$('.depart-item').on('click',function(e){//元素点击事件部门
+									click.call(this);
+								})
+							}else{
+								var old ='';
+								$('.depart-item').on('click',function(e){//人员部门点击事件
+									if($(this).attr('id')!=old){
+										old = $(this).attr('id');
+										$(this).siblings().hide();
+										//面包屑
+										bread(this);
+										var arr_break = [];
+										var arr_break_id = [];
+										function bread(obj){
+											if($(obj).closest('._child').prev('.depart-item').length!=0){
+												var name = $(obj).closest('._child').prev('.depart-item').text();
+												var _id = $(obj).closest('._child').prev('.depart-item').attr('id');
+												console.log(name)
+												arr_break.push(name);
+												arr_break_id.push(_id);
+												bread($(obj).closest('._child').prev('.depart-item'));
+											}
+										}
+										$('.select-path').html();
+										//面包屑end
+										$.get('json/ry.json',function(info){
+											var html_people = '';
+											$.extend(info,{ui_type:_type,_value:_val,_name:ass});
+											html_people += '{{each data}}<li class="user-item" id="{{$value.id}}">'
+														+'<span class="depart-icon"><i class="icon">&#xe64d;</i></span><span class="depart-text">{{$value.real_name}}</span>'
+														+'<div class="select-btn {{if ui_type==16}}select_radio{{else}}select_checked{{/if}}">'
+														+'<i class="{{$value.id}} {{if _value}}<% for(var i = 0;i < _value.split(",").length; i++){ %>{{if _value.split(",")[i]==$value.id}} checkeds{{/if}}<% }%>{{/if}} layui-icon">{{if ui_type==17}}&#xe605;{{/if}}</i>'
+														+'</div>'
+														+'</li>{{/each}}';
+											$('.select-user').html(templay.render(html_people,info));
+										})
+									}
+								})
+								$('.select-user').on('click','.user-item',function(){//人员点击事件
+									click.call(this);
+								})
+							}
 						}});
 						$('.select-set-pane').on('click','.remove-btn',function(){//小图标关闭事件
 							$(this).closest('.select-item').remove();
@@ -336,17 +450,22 @@ define(['jquery','layui','template','larea','lareadata','time'],function($,lay,t
 							switch($('.select-set-pane').attr('type')*1){
 								case 17:
 								case 16:
-									var icon = "&#xe64d;"
+									var icon = "&#xe64d;";
+									var _html = "<h1>点击选择人员</h1>";
 								break;
 								case 18:
 								case 19:
-									var icon = "&#xe60e;"
+									var icon = "&#xe60e;";
+									var _html = "<h1>点击选择部门</h1>";
 								break;
 							}
 							$('.select-list').children().each(function(){
 								add.push($(this).attr('class').split(' ')[1]);
 								html += '<span><i class="icon">'+icon+'</i>'+$(this).children().eq(1).text()+'</span>'
 							});
+							if(html==''){
+								html = _html
+							}
 							$that.html(html);_parent.attr('value',String(add));
 							shadeR();
 						})
