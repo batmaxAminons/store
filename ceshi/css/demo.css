@@ -1,3 +1,7 @@
+@import url("../js/lib/layui/css/layui.css");
+@import url("../js/lib/layui/css/modules/layer/default/layer.css");
+@import url("LArea.css");
+@import url("shijian.css");
 .header {
     position: absolute;
     top: 0;
@@ -308,4 +312,10 @@
 .select-path {
     padding: .5rem;
     border-bottom: solid 1px #e6e9ed;
+}
+.select-path li {
+    display: inline-block;
+}
+.select-path li.path-item {
+    color: #49a1f3;
 }

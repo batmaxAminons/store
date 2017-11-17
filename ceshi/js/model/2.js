@@ -372,7 +372,7 @@ define(['jquery','layui','template','larea','lareadata','time'],function($,lay,t
 						shade({html:templay.render(html,arr),fun:function(){
 							$('._btn').on('click',function(e){
 								e.stopPropagation();
-								$(this).toggleClass('_xz').parent().next('._child').toggle(300);
+								$(this).toggleClass('_xz').parent().next('._child').toggle(300).children('.depart-item').show();
 							})
 							function click(){
 								if($(this).closest('.select-set-pane').attr('type')=='18'||$(this).closest('.select-set-pane').attr('type')=='16'){
@@ -407,20 +407,33 @@ define(['jquery','layui','template','larea','lareadata','time'],function($,lay,t
 										old = $(this).attr('id');
 										$(this).siblings().hide();
 										//面包屑
+										var arr_break = [$(this).children('.depart-text').text()];
+										var arr_break_id = [$(this).attr('id')],obj_extend={};
 										bread(this);
-										var arr_break = [];
-										var arr_break_id = [];
 										function bread(obj){
 											if($(obj).closest('._child').prev('.depart-item').length!=0){
-												var name = $(obj).closest('._child').prev('.depart-item').text();
+												var name = $(obj).closest('._child').prev('.depart-item').children('.depart-text').text();
 												var _id = $(obj).closest('._child').prev('.depart-item').attr('id');
-												console.log(name)
 												arr_break.push(name);
 												arr_break_id.push(_id);
+												$(obj).closest('._child').siblings().hide().end().prev().show();
 												bread($(obj).closest('._child').prev('.depart-item'));
 											}
 										}
-										$('.select-path').html();
+										$.extend(obj_extend,{_name:arr_break.reverse(),_id:arr_break_id.reverse()});
+										var html_break ='<li class="path-item"><span>我的团队</span><i class="icon">&#xe608;</i></li>'
+													   +'{{each _id}}{{if $index==_id.length-1}}<li><span>{{_name[$index]}}</span></li>{{else}}<li _id="{{$value}}" class="path-item"><span>{{_name[$index]}}</span><i class="icon">&#xe608;</i></li>{{/if}}{{/each}}'
+										$('.select-path').html(templay.render(html_break,obj_extend));
+										$('.path-item').on('click',function(){
+											$('._btn').removeClass('_xz');
+											if($(this).attr('_id')){
+												$("#"+$(this).attr('_id')).children('._btn').addClass('_xz').end().siblings('._child').hide().end().next('._child').show().children('.depart-item').show().siblings('._child').hide();;
+											}else{
+												$('._child').hide();
+												$('.select-depart').children('.depart-item ').show();
+											}
+											$(this).removeClass('path-item').nextAll().remove().end().children('.icon').remove()
+										})
 										//面包屑end
 										$.get('json/ry.json',function(info){
 											var html_people = '';
